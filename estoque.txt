@@ -1,0 +1,45 @@
+Arroz,100,3.50,5.00,Corredor 1
+Feijão,80,4.00,6.00,Corredor 1
+Macarrão,120,2.50,4.00,Corredor 1
+Azeite,50,12.00,15.00,Corredor 1
+Farinha de Trigo,70,2.00,3.50,Corredor 1
+Leite,150,2.00,3.00,Corredor 2
+Manteiga,60,3.50,5.50,Corredor 2
+Iogurte,90,1.50,2.50,Corredor 2
+Queijo,40,6.00,9.00,Corredor 2
+Requeijão,50,4.50,7.00,Corredor 2
+Detergente,100,1.00,2.50,Corredor 3
+Sabão em Pó,80,5.00,7.50,Corredor 3
+Amaciante,60,7.00,10.00,Corredor 3
+Desinfetante,90,2.50,4.00,Corredor 3
+Água Sanitária,70,1.50,2.50,Corredor 3
+Pão de Forma,120,2.50,4.00,Corredor 4
+Bolacha,150,1.50,3.00,Corredor 4
+Bolo,80,4.00,6.00,Corredor 4
+Cereal,100,3.00,5.00,Corredor 4
+Biscoito,140,2.00,4.00,Corredor 4
+Cerveja,200,2.00,4.00,Corredor 5
+Refrigerante,180,3.00,5.00,Corredor 5
+Suco,150,2.50,4.50,Corredor 5
+Água Mineral,300,1.00,2.00,Corredor 5
+Vinho,50,15.00,25.00,Corredor 5
+Arroz Integral,60,4.00,6.50,Corredor 6
+Feijão Preto,40,5.00,7.50,Corredor 6
+Quinoa,30,8.00,12.00,Corredor 6
+Granola,50,6.00,9.50,Corredor 6
+Aveia,80,2.50,4.00,Corredor 6
+Shampoo,100,6.00,9.00,Corredor 7
+Condicionador,90,6.50,9.50,Corredor 7
+Sabonete,200,1.00,2.00,Corredor 7
+Pasta de Dente,120,2.50,4.00,Corredor 7
+Escova de Dente,150,3.00,5.00,Corredor 7
+Frango,60,10.00,15.00,Corredor 8
+Carne Bovina,40,20.00,30.00,Corredor 8
+Linguiça,50,8.00,12.00,Corredor 8
+Peixe,30,15.00,22.00,Corredor 8
+Carne Suína,40,12.00,18.00,Corredor 8
+Cenoura,80,1.00,2.00,Corredor 9
+Batata,100,1.50,2.50,Corredor 9
+Tomate,70,2.00,3.50,Corredor 9
+Cebola,60,1.20,2.00,Corredor 9
+Alface,90,1.00,2.00,Corredor 9
