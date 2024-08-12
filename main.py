@@ -51,5 +51,46 @@ def main():
         else:
             print("Operação inválida.")
 
+def testar_sistema():
+    estoque = {
+        0: {"nome": "Produto A", "quantidade": 100},
+        1: {"nome": "Produto B", "quantidade": 200}
+    }
+    
+    sistema = SistemaDeInventario(estoque)
+    
+    # Cenário 1: Leitura Exclusiva
+    print("Cenário 1: Leitura Exclusiva pelo Processador 0")
+    sistema.ler(0, 0)  # Processador 0 lê o produto A
+    sistema.caches[0].imprimir()
+    sistema.memoria_principal.imprimir()
+    
+    # Cenário 2: Leitura Compartilhada
+    print("Cenário 2: Leitura Compartilhada pelo Processador 1")
+    sistema.ler(1, 0)  # Processador 1 lê o produto A
+    sistema.caches[1].imprimir()
+    sistema.memoria_principal.imprimir()
+    
+    # Cenário 3: Escrita após Leitura Compartilhada
+    print("Cenário 3: Escrita após Leitura Compartilhada pelo Processador 1")
+    sistema.escrever(1, 0, 90)  # Processador 1 escreve no produto 0
+    sistema.caches[1].imprimir()
+    sistema.memoria_principal.imprimir()
+    
+    # Cenário 4: Escrita em Dado Exclusivo
+    print("Cenário 4: Escrita em Dado Exclusivo pelo Processador 0")
+    sistema.escrever(0, 1, 190)  # Processador 0 escreve no produto 1
+    sistema.caches[0].imprimir()
+    sistema.memoria_principal.imprimir()
+    
+    # Cenário 5: Invalidação
+    print("Cenário 5: Invalidação após Escrita pelo Processador 2")
+    sistema.ler(2, 0)  # Processador 2 lê o produto 0
+    sistema.escrever(2, 0, 80)  # Processador 2 escreve no produto 0
+    sistema.caches[2].imprimir()
+    sistema.memoria_principal.imprimir()
+
+
 if __name__ == "__main__":
+    testar_sistema()
     main()

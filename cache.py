@@ -24,8 +24,8 @@ class Cache:
         self.linhas.append(nova_linha)
         return nova_linha
     
-    def imprimir(self):
-        print("Memória Cache:")
+    def imprimir(self, num):
+        print("Memória Cache " + str(num) +": ")
         for i, linha in enumerate(self.linhas):
             estado = linha.estado
             print(f"Linha {i}: Tag = {linha.tag}, Dados = {linha.data}, Estado = {estado}")
