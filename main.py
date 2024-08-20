@@ -2,15 +2,18 @@ from estoque import Estoque
 from sistema import SistemaDeInventario
 
 def main():
-    estoque = Estoque()
+    estoque = Estoque('estoque.txt')
     sistema = SistemaDeInventario(estoque)
     
     while True:
         print("Escolha um processador (0, 1, 2) :")
-        processador_id = int(input())
-        
-        if processador_id not in [0, 1, 2]:
-            print("ID do processador inválido. Por favor, escolha 0, 1 ou 2.")
+        try:
+            processador_id = int(input())
+            if processador_id not in [0, 1, 2]:
+                print("ID do processador inválido. Por favor, escolha 0, 1 ou 2.")
+                continue
+        except ValueError:
+            print("Entrada inválida. Por favor, digite um número inteiro.")
             continue
         
         print("=" * 100)
@@ -19,78 +22,113 @@ def main():
         print("2 - Escrita: Adicionar ou Atualizar informações de um produto no estoque")
         print("3 - Imprimir Memória Principal: Exibir todos os produtos na memória principal")
         print("4 - Imprimir Caches: Exibir o conteúdo das caches dos processadores")
-        print("5 - Sair: Encerrar o programa")
+        print("5 - Testar Sistema: Executar cenários de teste")
+        print("6 - Sair: Encerrar o programa")
         print("=" * 100)
         
-        operacao = int(input())
+        try:
+            operacao = int(input())
+        except ValueError:
+            print("Entrada inválida. Por favor, digite um número inteiro.")
+            continue
         
         if operacao in [1, 2]:
-            print("Digite o ID do produto (0-49):")
-            endereco = int(input())
+            try:
+                print("Digite o ID do produto (0-49):")
+                endereco = int(input())
+                if endereco < 0 or endereco >= 50:
+                    print("ID do produto fora do intervalo válido (0-49).")
+                    continue
+                
+                if operacao == 1:
+                    produto = estoque.ler_produto(endereco)
+                    if produto is not None:
+                        print(f"Produto lido: {produto}")
+                    else:
+                        print("Produto não encontrado.")
+                elif operacao == 2:
+                    
+                    print("Digite a nova quantidade (ou pressione Enter para não alterar):")
+                    quantidade_str = input().strip()
+                    quantidade = int(quantidade_str) if quantidade_str != "" else None
+                    
+                    print("Digite o novo nome (ou pressione Enter para não alterar):")
+                    nome = input().strip()
+                    if nome == "":
+                        nome = None
+                    
+                    print("Digite o novo preço de compra (ou pressione Enter para não alterar):")
+                    preco_compra_str = input().strip()
+                    preco_compra = float(preco_compra_str) if preco_compra_str != "" else None
+                    
+                    print("Digite o novo preço de venda (ou pressione Enter para não alterar):")
+                    preco_venda_str = input().strip()
+                    preco_venda = float(preco_venda_str) if preco_venda_str != "" else None
+                    
+                    print("Digite o novo local (ou pressione Enter para não alterar):")
+                    local = input().strip()
+                    if local == "":
+                        local = None
+                    
+                    sistema.escrever(processador_id, endereco, nome=nome, quantidade=quantidade, preco_compra=preco_compra, preco_venda=preco_venda, local=local)
+                    print(f"Produto ID {endereco} atualizado com sucesso.")
             
-            if operacao == 1:
-                quantidade = sistema.ler(processador_id, endereco)
-                produto = estoque.ler_produto(endereco)
-                print(f"Produto lido: {produto}, Quantidade lida: {quantidade}")
-            elif operacao == 2:
-                print("Digite a nova quantidade:")
-                quantidade = int(input())
-                sistema.escrever(processador_id, endereco, quantidade)
-                print(f"Nova quantidade do produto ID {endereco} atualizada para {quantidade}")
+            except ValueError:
+                print("Entrada inválida. Por favor, digite um número inteiro.")
         
         elif operacao == 3:
             sistema.memoria_principal.imprimir()
         
         elif operacao == 4:
-            print(f"Cache do Processador {processador_id}:")
-            sistema.caches[processador_id].imprimir()
-                
+            if processador_id in [0, 1, 2]:
+                print(f"Cache do Processador {processador_id}:")
+                sistema.caches[processador_id].imprimir(processador_id)
+            else:
+                print("ID do processador inválido.")
+        
         elif operacao == 5:
+            testar_sistema()
+        
+        elif operacao == 6:
             break
         
         else:
             print("Operação inválida.")
 
 def testar_sistema():
-    estoque = {
-        0: {"nome": "Produto A", "quantidade": 100},
-        1: {"nome": "Produto B", "quantidade": 200}
-    }
-    
+    estoque = Estoque('estoque.txt')
     sistema = SistemaDeInventario(estoque)
     
     # Cenário 1: Leitura Exclusiva
     print("Cenário 1: Leitura Exclusiva pelo Processador 0")
     sistema.ler(0, 0)  # Processador 0 lê o produto A
-    sistema.caches[0].imprimir()
+    sistema.caches[0].imprimir(0)
     sistema.memoria_principal.imprimir()
     
     # Cenário 2: Leitura Compartilhada
     print("Cenário 2: Leitura Compartilhada pelo Processador 1")
     sistema.ler(1, 0)  # Processador 1 lê o produto A
-    sistema.caches[1].imprimir()
+    sistema.caches[1].imprimir(1)
     sistema.memoria_principal.imprimir()
     
     # Cenário 3: Escrita após Leitura Compartilhada
     print("Cenário 3: Escrita após Leitura Compartilhada pelo Processador 1")
     sistema.escrever(1, 0, 90)  # Processador 1 escreve no produto 0
-    sistema.caches[1].imprimir()
+    sistema.caches[1].imprimir(1)
     sistema.memoria_principal.imprimir()
     
     # Cenário 4: Escrita em Dado Exclusivo
     print("Cenário 4: Escrita em Dado Exclusivo pelo Processador 0")
     sistema.escrever(0, 1, 190)  # Processador 0 escreve no produto 1
-    sistema.caches[0].imprimir()
+    sistema.caches[0].imprimir(0)
     sistema.memoria_principal.imprimir()
     
     # Cenário 5: Invalidação
     print("Cenário 5: Invalidação após Escrita pelo Processador 2")
     sistema.ler(2, 0)  # Processador 2 lê o produto 0
     sistema.escrever(2, 0, 80)  # Processador 2 escreve no produto 0
-    sistema.caches[2].imprimir()
+    sistema.caches[2].imprimir(2)
     sistema.memoria_principal.imprimir()
-
-
+    
 if __name__ == "__main__":
-    testar_sistema()
     main()

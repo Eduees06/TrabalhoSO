@@ -30,7 +30,6 @@ class SistemaDeInventario:
                 print(f"Acerto de leitura no processador {processador_id}")
             return linha.data
         else:
-            print(f"Falha de leitura no processador {processador_id}")
             # Verificar se a linha está em outra cache com estado 'E'
             linha_compartilhada = self.verificar_cache_exclusiva(tag)
             if linha_compartilhada:
@@ -43,9 +42,16 @@ class SistemaDeInventario:
                 data = self.memoria_principal.ler(endereco)
                 linha = cache.substituir_linha(tag, data)
                 linha.estado = 'E'  # Exclusivo
-            return linha.data
+            
+            # Verifique novamente se a linha foi corretamente atualizada
+            if linha:
+                print(f"Leitura bem-sucedida após atualização no processador {processador_id}")
+                return linha.data
+            else:
+                print(f"Falha de leitura persistente no processador {processador_id}")
+                return None
     
-    def escrever(self, processador_id, endereco, valor):
+    def escrever(self, processador_id, endereco, nome=None, quantidade=None, preco_compra=None, preco_venda=None, local=None):
         cache = self.caches[processador_id]
         tag = endereco
         
@@ -67,8 +73,15 @@ class SistemaDeInventario:
             linha.estado = 'M'
             self.invalidar_outras_caches(processador_id, tag)
         
-        linha.data = valor
-        self.memoria_principal.escrever(endereco, nome=None, quantidade=valor)
+        # Atualize o produto na memória principal
+        self.memoria_principal.escrever(endereco, nome, quantidade, preco_compra, preco_venda, local)
+        
+        # Imprima os detalhes atualizados do produto
+        produto_atualizado = self.memoria_principal.data.ler_produto(endereco)
+        if produto_atualizado:
+            print(f"Produto atualizado: ID: {endereco}, Nome: {produto_atualizado.nome}, Quantidade: {produto_atualizado.quantidade}, Preço de Compra: {produto_atualizado.preco_compra}, Preço de Venda: {produto_atualizado.preco_venda}, Local: {produto_atualizado.local}")
+        else:
+            print(f"Produto ID {endereco} não encontrado na memória principal.")
     
     def verificar_cache_exclusiva(self, tag):
         """

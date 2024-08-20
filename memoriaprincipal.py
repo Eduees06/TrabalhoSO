@@ -7,7 +7,7 @@ class MemoriaPrincipal:
     
     def ler(self, endereco):
         produto = self.data.ler_produto(endereco)
-        return produto.quantidade if produto else None
+        return produto if produto else None
     
     def escrever(self, endereco, nome=None, quantidade=None, preco_compra=None, preco_venda=None, local=None):
         self.data.escrever_produto(endereco, nome=nome, quantidade=quantidade, preco_compra=preco_compra, preco_venda=preco_venda, local=local)

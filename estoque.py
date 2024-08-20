@@ -37,7 +37,6 @@ class Estoque:
             if local is not None:
                 produto.local = local
             self.produtos[id] = produto
-            print(f"Produto atualizado: {produto}")
         else:
             resposta = input(f"Produto com ID {id} não encontrado. Deseja criar um novo produto? (s/n): ").strip().lower()
             if resposta == 's':
