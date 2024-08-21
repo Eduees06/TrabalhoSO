@@ -20,10 +20,10 @@ class Estoque:
                 else:
                     print(f"Formato incorreto na linha {idx + 1}: {linha}")
     
-    def ler_produto(self, id):
-        return self.produtos.get(id)
+    def ler_produto(self, endereco):
+        return self.produtos[endereco] if endereco in self.produtos else None
     
-    def escrever_produto(self, id, nome=None, quantidade=None, preco_compra=None, preco_venda=None, local=None):
+    def atualizar_produto(self, id, nome=None, quantidade=None, preco_compra=None, preco_venda=None, local=None):
         if id in self.produtos:
             produto = self.produtos[id]
             if nome is not None:

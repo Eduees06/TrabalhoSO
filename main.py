@@ -41,13 +41,12 @@ def main():
                     continue
                 
                 if operacao == 1:
-                    produto = estoque.ler_produto(endereco)
+                    produto = sistema.ler(processador_id, endereco)
                     if produto is not None:
                         print(f"Produto lido: {produto}")
                     else:
                         print("Produto não encontrado.")
                 elif operacao == 2:
-                    
                     print("Digite a nova quantidade (ou pressione Enter para não alterar):")
                     quantidade_str = input().strip()
                     quantidade = int(quantidade_str) if quantidade_str != "" else None
@@ -82,7 +81,7 @@ def main():
         elif operacao == 4:
             if processador_id in [0, 1, 2]:
                 print(f"Cache do Processador {processador_id}:")
-                sistema.caches[processador_id].imprimir(processador_id)
+                sistema.caches[processador_id].imprimir()
             else:
                 print("ID do processador inválido.")
         

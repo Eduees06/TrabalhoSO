@@ -1,5 +1,5 @@
-80,100,3.5,5.0,Corredor 1
-190,80,4.0,6.0,Corredor 1
+Arroz,100,3.5,5.0,Corredor 1
+Feijão,80,4.0,6.0,Corredor 1
 Macarrão,100,2.5,4.0,Corredor 1
 Azeite,50,12.0,15.0,Corredor 1
 Farinha de Trigo,70,2.0,3.5,Corredor 1

@@ -10,7 +10,7 @@ class MemoriaPrincipal:
         return produto if produto else None
     
     def escrever(self, endereco, nome=None, quantidade=None, preco_compra=None, preco_venda=None, local=None):
-        self.data.escrever_produto(endereco, nome=nome, quantidade=quantidade, preco_compra=preco_compra, preco_venda=preco_venda, local=local)
+        self.data.atualizar_produto(endereco, nome=nome, quantidade=quantidade, preco_compra=preco_compra, preco_venda=preco_venda, local=local)
         
     def imprimir(self):
         print("Memória Principal:")
