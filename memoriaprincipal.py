@@ -2,8 +2,9 @@ from estoque import Estoque
 
 class MemoriaPrincipal:
     def __init__(self, estoque):
-        estoque = Estoque()
+        
         self.data = estoque
+        self.produtos = {}
     
     def ler(self, endereco):
         produto = self.data.ler_produto(endereco)

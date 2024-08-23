@@ -1,6 +1,6 @@
-80,100,3.5,5.0,Corredor 1
-190,80,4.0,6.0,Corredor 1
-Macarrão,100,2.5,4.0,Corredor 1
+Arroz,200,3.5,5.0,Corredor 1
+Feijão,80,4.0,6.0,Corredor 1
+Macarrão,190,2.5,4.0,Corredor 1
 Azeite,50,12.0,15.0,Corredor 1
 Farinha de Trigo,70,2.0,3.5,Corredor 1
 Leite,150,2.0,3.0,Corredor 2
@@ -43,3 +43,8 @@ Batata,100,1.5,2.5,Corredor 9
 Tomate,70,2.0,3.5,Corredor 9
 Cebola,60,1.2,2.0,Corredor 9
 Alface,90,1.0,2.0,Corredor 9
+Leite de Amendoas,200,8.0,10.0,Corredor 10
+Leite de Vaca,190,2.0,5.0,Corredor 10
+None,0,0,0,None
+None,0,0,0,None
+None,0,0,0,None

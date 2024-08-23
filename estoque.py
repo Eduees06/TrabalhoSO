@@ -1,7 +1,8 @@
 from produto import Produto
 
 class Estoque:
-    def __init__(self, arquivo='estoque.txt'):
+    def __init__(self, arquivo):
+        self.arquivo = arquivo
         self.produtos = {}
         self.carregar_estoque(arquivo)
     
@@ -20,31 +21,38 @@ class Estoque:
                 else:
                     print(f"Formato incorreto na linha {idx + 1}: {linha}")
     
-    def ler_produto(self, id):
-        return self.produtos.get(id)
+    def ler_produto(self, endereco):
+        return self.produtos[endereco] if endereco in self.produtos else None
     
     def escrever_produto(self, id, nome=None, quantidade=None, preco_compra=None, preco_venda=None, local=None):
-        if id in self.produtos:
-            produto = self.produtos[id]
-            if nome is not None:
-                produto.nome = nome
-            if quantidade is not None:
-                produto.quantidade = quantidade
-            if preco_compra is not None:
-                produto.preco_compra = preco_compra
-            if preco_venda is not None:
-                produto.preco_venda = preco_venda
-            if local is not None:
-                produto.local = local
-            self.produtos[id] = produto
+        
+        produto = self.produtos[id]
+        if nome is not None:
+            produto.nome = nome
+        if quantidade is not None:
+            produto.quantidade = quantidade
+        if preco_compra is not None:
+            produto.preco_compra = preco_compra
+        if preco_venda is not None:
+            produto.preco_venda = preco_venda
+        if local is not None:
+            produto.local = local
+        print(f"Posição {id} atualizado na memória principal: {produto}")
+        
+        # Atualiza a linha específica no arquivo
+        self.atualizar_linha_no_arquivo(id, produto)
+
+    def atualizar_linha_no_arquivo(self, id, produto):
+        linhas = []
+        with open(self.arquivo, 'r') as f:
+            linhas = f.readlines()
+
+        if id < len(linhas):
+            # Substitui a linha específica pelo produto atualizado
+            linhas[id] = f"{produto.nome},{produto.quantidade},{produto.preco_compra},{produto.preco_venda},{produto.local}\n"
         else:
-            resposta = input(f"Produto com ID {id} não encontrado. Deseja criar um novo produto? (s/n): ").strip().lower()
-            if resposta == 's':
-                nome = input("Digite o nome do produto: ")
-                quantidade = int(input("Digite a quantidade: "))
-                preco_compra = float(input("Digite o preço de compra: "))
-                preco_venda = float(input("Digite o preço de venda: "))
-                local = input("Digite o local do estabelecimento: ")
-                produto = Produto(id, nome, quantidade, preco_compra, preco_venda, local)
-                self.produtos[id] = produto
-                print(f"Produto criado: {produto}")
+            # Adiciona nova linha se o ID for novo
+            linhas.append(f"{produto.nome},{produto.quantidade},{produto.preco_compra},{produto.preco_venda},{produto.local}\n")
+
+        with open(self.arquivo, 'w') as f:
+            f.writelines(linhas)
