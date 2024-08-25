@@ -10,7 +10,8 @@ class SistemaGUI:
         self.root = root
         self.root.geometry("800x600")
         self.root.title("Sistema de Inventário")
-        self.sistema = None  # Inicializa o sistema como None
+        self.sistema = None 
+        self.ultima_leitura = None
         self.iniciar_tela_inicial()
 
     def iniciar_tela_inicial(self):
@@ -27,13 +28,11 @@ class SistemaGUI:
         btn_importar_estoque.pack(pady=10)
 
     def mostrar_interface_operacoes(self):
-        # Esconde a tela atual (tela inicial ou tela de novo estoque)
         if hasattr(self, 'frame_inicial'):
             self.frame_inicial.pack_forget()
         if hasattr(self, 'frame_novo_estoque'):
             self.frame_novo_estoque.pack_forget()
 
-        # Exibe as opções de operações (leitura, escrita, etc.)
         self.frame_operacoes = tk.Frame(self.root)
         self.frame_operacoes.pack(fill=tk.BOTH, expand=True)
 
@@ -58,9 +57,8 @@ class SistemaGUI:
         btn_voltar = tk.Button(self.frame_operacoes, text="Voltar", command=self.voltar_para_inicial)
         btn_voltar.pack(pady=10)
 
-
     def tela_novo_estoque(self):
-        self.frame_inicial.pack_forget()  # Esconde a tela inicial
+        self.frame_inicial.pack_forget()
         self.frame_novo_estoque = tk.Frame(self.root)
         self.frame_novo_estoque.pack(fill=tk.BOTH, expand=True)
 
@@ -95,37 +93,11 @@ class SistemaGUI:
         else:
             messagebox.showerror("Erro", "Por favor, insira um nome de arquivo válido.")
 
-    def tela_operacoes(self):
-        # Transição para a tela de operações, ocultando telas anteriores
-        self.frame_novo_estoque.pack_forget()
-        self.frame_operacoes = tk.Frame(self.root)
-        self.frame_operacoes.pack(fill=tk.BOTH, expand=True)
-
-        # Adiciona botões para as operações (ler, escrever, imprimir memória, imprimir caches, etc.)
-        btn_ler = tk.Button(self.frame_operacoes, text="Ler Produto", command=self.ler_produto)
-        btn_ler.pack(pady=10)
-            
-        btn_escrever = tk.Button(self.frame_operacoes, text="Escrever Produto", command=self.escrever_produto)
-        btn_escrever.pack(pady=10)
-            
-        btn_imprimir_memoria = tk.Button(self.frame_operacoes, text="Imprimir Memória", command=self.imprimir_memoria)
-        btn_imprimir_memoria.pack(pady=10)
-            
-        btn_imprimir_caches = tk.Button(self.frame_operacoes, text="Imprimir Caches", command=self.imprimir_caches)
-        btn_imprimir_caches.pack(pady=10)
-        
-        btn_testar_sistema = tk.Button(self.frame_operacoes, text="Testar Sistema", command=self.testar_sistema)            
-        btn_testar_sistema.pack(pady=10)
-            
-        btn_voltar = tk.Button(self.frame_operacoes, text="Voltar para o Menu Principal", command=self.voltar_para_inicial)
-        btn_voltar.pack(pady=10)
-
     def voltar_para_inicial(self):
         if hasattr(self, 'frame_operacoes'):
             self.frame_operacoes.pack_forget()
-        self.iniciar_tela_inicial()  # Mostra a tela inicial novamente
+        self.iniciar_tela_inicial()
 
-    # Métodos para operações de ler, escrever, imprimir memória, etc.
     def ler_produto(self):
         if not self.sistema:
             messagebox.showwarning("Aviso", "Por favor, inicie o estoque antes.")
@@ -139,12 +111,22 @@ class SistemaGUI:
         if endereco is None:
             return
         
+        cache_hit_antes = any(self.sistema.caches[i].encontrar_linha(endereco) is not None for i in range(len(self.sistema.caches)))
+
         produto = self.sistema.ler(processador_id, endereco)
+        
+        if cache_hit_antes:
+            messagebox.showinfo("Read Hit", f"Leitura bem-sucedida na cache {processador_id} (Read Hit).")
+        else:
+            messagebox.showinfo("Read Miss", f"Produto não estava na cache {processador_id} (Read Miss).")
+
         if produto is not None:
             messagebox.showinfo("Produto", f"Produto lido: {produto}")
+
         else:
             messagebox.showinfo("Produto", "Produto não encontrado.")
-    
+            self.ultima_leitura = None
+
     def escrever_produto(self):
         if not self.sistema:
             messagebox.showwarning("Aviso", "Por favor, inicie o estoque antes.")
@@ -166,7 +148,15 @@ class SistemaGUI:
         preco_venda = self.solicitar_input("Preço de venda", produto_existente.preco_venda if produto_existente else "")
         local = self.solicitar_input("Localização", produto_existente.local if produto_existente else "")
         
+        cache_hit_antes = any(self.sistema.caches[i].encontrar_linha(endereco) is not None for i in range(len(self.sistema.caches)))
+
         self.sistema.escrever(processador_id, endereco, nome=nome, quantidade=int(quantidade), preco_compra=float(preco_compra), preco_venda=float(preco_venda), local=local)
+        
+        if cache_hit_antes:
+            messagebox.showinfo("Write Hit", f"Escrita bem-sucedida na cache {processador_id} (Write Hit).")
+        else:
+            messagebox.showinfo("Write Miss", f"Produto não estava na cache {processador_id} (Write Miss).")
+
         messagebox.showinfo("Produto", f"Produto ID {endereco} atualizado com sucesso.")
     
     def imprimir_memoria(self):
@@ -181,48 +171,41 @@ class SistemaGUI:
             return
         
         if self.sistema:
-            self.sistema.caches[processador_id].imprimir()
+            cache = self.sistema.caches[processador_id]
+            cache.imprimir()
         else:
             messagebox.showwarning("Aviso", "Por favor, inicie o estoque antes.")
-    
+
     def testar_sistema(self):
         # Supondo que o sistema tenha um atributo para acessar o estoque
         if self.sistema and hasattr(self.sistema, 'estoque_objeto'):  # Substitua 'estoque_objeto' pelo nome correto
             arquivo_estoque = self.sistema.estoque_objeto.arquivo  # Acesse o arquivo do estoque através do objeto
-            testar_sistema(arquivo_estoque)
+            teste = testar_sistema(arquivo_estoque)
+        
+            if teste == 9:
+                messagebox.showinfo("Passou no teste!", "O sistema passou nos 9 testes!")
+            else:
+                messagebox.showinfo("Não passou.", f"O sistema não passou em todos os testes. {teste}/9 testes.")
+
         else:
             messagebox.showwarning("Aviso", "Por favor, inicie o estoque antes.")
     
     def solicitar_processador(self):
-        processador_id = self.solicitar_input("Escolha um processador (0, 1, 2)")
-        if processador_id is None:
-            return None
-        try:
-            processador_id = int(processador_id)
-            if processador_id not in [0, 1, 2]:
-                messagebox.showerror("Erro", "ID do processador inválido. Por favor, escolha 0, 1 ou 2.")
-                return None
-        except ValueError:
-            messagebox.showerror("Erro", "Entrada inválida. Por favor, digite um número inteiro.")
+        processador_id = simpledialog.askinteger("Processador", "Digite o ID do processador (0, 1 ou 2):")
+        if processador_id is None or processador_id not in [0, 1, 2]:
+            messagebox.showwarning("Aviso", "Por favor, insira um ID de processador válido (0, 1 ou 2).")
             return None
         return processador_id
-    
+
     def solicitar_endereco(self):
-        endereco = self.solicitar_input("Digite o ID do produto (0-49)")
-        if endereco is None:
-            return None
-        try:
-            endereco = int(endereco)
-            if endereco < 0 or endereco >= 50:
-                messagebox.showerror("Erro", "ID do produto fora do intervalo válido (0-49).")
-                return None
-        except ValueError:
-            messagebox.showerror("Erro", "Entrada inválida. Por favor, digite um número inteiro.")
+        endereco = simpledialog.askinteger("Endereço", "Digite o endereço do produto:")
+        if endereco is None or endereco < 0:
+            messagebox.showwarning("Aviso", "Por favor, insira um endereço válido (número inteiro positivo).")
             return None
         return endereco
-    
-    def solicitar_input(self, mensagem, valor_default=""):
-        return simpledialog.askstring("Input", mensagem, initialvalue=valor_default)
+
+    def solicitar_input(self, label, valor_atual=""):
+        return simpledialog.askstring(label, f"{label}:", initialvalue=valor_atual)
 
 def criar_estoque_com_valores_none(arquivo, num_produtos=50):
     with open(arquivo, 'w') as f:
@@ -233,8 +216,9 @@ def criar_estoque_com_valores_none(arquivo, num_produtos=50):
             preco_venda = 0
             local = "None"
             f.write(f"{nome},{quantidade},{preco_compra},{preco_venda},{local}\n")
-
+            
 if __name__ == "__main__":
     root = tk.Tk()
     app = SistemaGUI(root)
     root.mainloop()
+

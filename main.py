@@ -239,6 +239,8 @@ def testar_sistema(arquivo):
     
     print(f"{teste}/9 testes concluídos com sucesso.")
     
+    return teste
+    
 
 def criar_estoque_com_valores_none(arquivo, num_produtos=50):
     with open(arquivo, 'w') as f:
