@@ -4,6 +4,7 @@ from produto import Produto
 
 class SistemaDeInventario:
     def __init__(self, estoque):
+        self.estoque_objeto = estoque
         self.memoria_principal = MemoriaPrincipal(estoque)
         self.caches = [Cache() for _ in range(3)]  # Três processadores
     

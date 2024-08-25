@@ -1,2 +1,0 @@
-- Testar todos os casos do MESI
-- Interface Gráfica

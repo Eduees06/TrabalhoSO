@@ -163,8 +163,18 @@ def testar_sistema(arquivo):
     else:
         print(f"Teste falhou: Estados incorretos (Proc0: {estado_proc0}, Proc2: {estado_proc2}).")
 
-    # Cenário 4: Escrita em Estado Exclusivo (E)
-    print("\nCenário 4: Escrita em Estado Exclusivo pelo Processador 0")
+    # Cenário 4: Escrita em Estado Modificado
+    print("\nCenário 4: Escrita em Estado Modificado pelo Processador 0")
+    sistema.escrever(0, 0, "Arroz", 300, 4.0, 5.5, "Corredor 1")
+    estado = sistema.caches[0].encontrar_linha(0).estado
+    if estado == 'M':
+        print("Teste passou: Estado correto (Modificado) após escrita de dado modificado.")
+        teste += 1
+    else:
+        print(f"Teste falhou: Estado incorreto ({estado}) após escrita de dado modificado.")
+
+    # Cenário 5: Escrita em Estado Exclusivo (E)
+    print("\nCenário 5: Escrita em Estado Exclusivo pelo Processador 0")
     sistema.escrever(0, 1, "Feijão", 100, 4.0, 6.0, "Corredor 1")
     estado = sistema.caches[0].encontrar_linha(1).estado
     if estado == 'M':
@@ -173,8 +183,8 @@ def testar_sistema(arquivo):
     else:
         print(f"Teste falhou: Estado incorreto ({estado}) após escrita exclusiva.")
 
-    # Cenário 5: Escrita em Estado Compartilhado (S)
-    print("\nCenário 5: Escrita em Estado Compartilhado pelo Processador 1")
+    # Cenário 6: Escrita em Estado Compartilhado (S)
+    print("\nCenário 6: Escrita em Estado Compartilhado pelo Processador 1")
     sistema.ler(0, 3)
     sistema.ler(1, 3)
     sistema.escrever(1, 3, "Macarrão", 50, 2.0, 3.0, "Corredor 2")
@@ -186,8 +196,8 @@ def testar_sistema(arquivo):
     else:
         print(f"Teste falhou: Estados incorretos (Proc1: {estado_proc1}, Proc0: {estado_proc0}).")
 
-    # Cenário 6: Escrita em Estado Modificado (M)
-    print("\nCenário 6: Escrita em Estado Modificado pelo Processador 0")
+    # Cenário 7: Escrita em Estado Modificado (M)
+    print("\nCenário 7: Escrita em Estado Modificado pelo Processador 0")
     sistema.escrever(1, 3, "Feijão", 150, 3.0, 4.5, "Corredor 3")
     estado = sistema.caches[1].encontrar_linha(3).estado
     if estado == 'M':
@@ -196,8 +206,8 @@ def testar_sistema(arquivo):
     else:
         print(f"Teste falhou: Estado incorreto ({estado}) após escrita.")
 
-    # Cenário 7: Escrita com Estado Inválido (I)
-    print("\nCenário 7: Escrita com Estado Inválido pelo Processador 1")
+    # Cenário 8: Escrita com Estado Inválido (I)
+    print("\nCenário 8: Escrita com Estado Inválido pelo Processador 1")
     sistema.ler(0, 3)
     sistema.ler(1, 3)
     sistema.escrever(0, 3, "Farinha", 80, 1.5, 2.5, "Corredor 4")
@@ -208,8 +218,26 @@ def testar_sistema(arquivo):
         teste += 1
     else:
         print(f"Teste falhou: Estados incorretos (Proc0: {estado_proc0}, Proc1: {estado_proc1}).")
+    
+    # Cenário 9: Escrita com múltiplas cópias modificadas
+    print("\nCenário 9: Escrita com múltiplas cópias modificadas")
+    sistema.ler(0, 3)
+    sistema.ler(1, 3)
+    sistema.escrever(0, 3, "Farinha", 80, 1.5, 2.5, "Corredor 4")  # Proc 0 modifica
+    sistema.escrever(1, 3, "Açúcar", 100, 2.0, 3.0, "Corredor 5")  # Proc 1 modifica
+    sistema.escrever(2, 3, "Leite", 120, 1.8, 2.8, "Corredor 6")  # Proc 2 tenta escrever
+    estado_proc0 = sistema.caches[0].encontrar_linha(3).estado
+    estado_proc1 = sistema.caches[1].encontrar_linha(3).estado
+    estado_proc2 = sistema.caches[2].encontrar_linha(3).estado
 
-    print(f"{teste}/7 testes concluídos com sucesso.")
+    if estado_proc0 == 'I' and estado_proc1 == 'I' and estado_proc2 == 'M':
+        print("Teste passou: Estados corretos após escrita com múltiplas cópias modificadas.")
+        teste += 1
+    else:
+        print(f"Teste falhou: Estados incorretos (Proc0: {estado_proc0}, Proc1: {estado_proc1}, Proc2: {estado_proc2}).")
+
+    
+    print(f"{teste}/9 testes concluídos com sucesso.")
     
 
 def criar_estoque_com_valores_none(arquivo, num_produtos=50):
